@@ -9,13 +9,29 @@ jobs:
       - name: Checkout do código
         uses: actions/checkout@v3
 
-      - name: Configurar Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.12'
+      - name: Verificar se Secrets existem
+        run: |
+          if [ -z "${{ secrets.AWS_ACCESS_KEY_ID }}" ]; then echo "ERRO: AWS_ACCESS_KEY_ID não encontrado"; else echo "OK: AWS_ACCESS_KEY_ID detectado"; fi
+          if [ -z "${{ secrets.AWS_SECRET_ACCESS_KEY }}" ]; then echo "ERRO: AWS_SECRET_ACCESS_KEY não encontrado"; else echo "OK: AWS_SECRET_ACCESS_KEY detectado"; fi
 
-      - name: Instalar dependências
-        run: pip install boto3
+      - name: Configurar credenciais AWS
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+name: Auditoria de Segurança S3
+
+on: [push]
+
+jobs:
+  auditoria:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v3
+
+      - name: Verificar se Secrets existem
+        run: |
+          if [ -z "${{ secrets.AWS_ACCESS_KEY_ID }}" ]; then echo "ERRO: AWS_ACCESS_KEY_ID não encontrado"; else echo "OK: AWS_ACCESS_KEY_ID detectado"; fi
+          if [ -z "${{ secrets.AWS_SECRET_ACCESS_KEY }}" ]; then echo "ERRO: AWS_SECRET_ACCESS_KEY não encontrado"; else echo "OK: AWS_SECRET_ACCESS_KEY detectado"; fi
 
       - name: Configurar credenciais AWS
         uses: aws-actions/configure-aws-credentials@v4
@@ -25,4 +41,6 @@ jobs:
           aws-region: us-east-1
 
       - name: Rodar Auditoria
-        run: python auditor-sec.py
+        run: |
+          pip install boto3
+          python auditor-sec.py
