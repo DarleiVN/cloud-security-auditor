@@ -9,11 +9,6 @@ jobs:
       - name: Checkout do código
         uses: actions/checkout@v3
 
-      - name: Verificar se Secrets existem
-        run: |
-          if [ -z "${{ secrets.AWS_ACCESS_KEY_ID }}" ]; then echo "ERRO: AWS_ACCESS_KEY_ID não encontrado"; else echo "OK: AWS_ACCESS_KEY_ID detectado"; fi
-          if [ -z "${{ secrets.AWS_SECRET_ACCESS_KEY }}" ]; then echo "ERRO: AWS_SECRET_ACCESS_KEY não encontrado"; else echo "OK: AWS_SECRET_ACCESS_KEY detectado"; fi
-
       - name: Configurar credenciais AWS
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -25,3 +20,10 @@ jobs:
         run: |
           pip install boto3
           python auditor-sec.py
+
+      - name: Salvar Relatório como Artefato
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: relatorio-auditoria
+          path: auditoria-s3.txt
