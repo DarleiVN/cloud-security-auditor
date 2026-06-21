@@ -10,13 +10,13 @@ def auditar_bucket(nome_bucket):
         bloqueado = config['PublicAccessBlockConfiguration']['BlockPublicAcls']
         
         if bloqueado:
-            return "✅ SEGURO"
+            return " SEGURO"
         else:
-            return "❌ RISCO: Acesso público permitido"
+            return " RISCO: Acesso público permitido"
             
     except ClientError:
         # Se não tiver configuração de bloqueio, ele está exposto por padrão
-        return "❌ RISCO: Sem configuração de bloqueio"
+        return " RISCO: Sem configuração de bloqueio"
 
 # Listagem com auditoria
 response = s3.list_buckets()
